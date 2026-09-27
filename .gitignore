@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Environment
+.env
+
+# Windows
+*:Zone.Identifier
+
+# OS junk
+.DS_Store
+Thumbs.db
+

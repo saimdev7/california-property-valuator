@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Golden Ledger — California Valuation</title>
+
+<!-- Google Fonts: Fraunces (headline serif) + Inter (body/UI sans) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#eef0e6; --paper-2:#e6e9dc; --ink:#1c231f; --ink-soft:#4b5347;
+    --gold:#b8862f; --teal:#1f4d47; --line:#cfd3c2; --white:#fbfaf6;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,system-ui,sans-serif;line-height:1.5;}
+  h1,h2,.serif{font-family:Fraunces,serif;}
+  .wrap{max-width:920px;margin:0 auto;padding:0 24px 80px;}
+  header.masthead{border-bottom:1px solid var(--line);padding:28px 0 20px;display:flex;justify-content:space-between;align-items:baseline;}
+  .brand{font-family:Fraunces,serif;font-size:22px;font-weight:600;letter-spacing:.2px;}
+  .brand span{color:var(--gold);}
+  .tagline{font-size:13px;color:var(--ink-soft);}
+  .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;padding:44px 0 36px;border-bottom:1px solid var(--line);}
+  .hero h1{font-size:38px;line-height:1.12;font-weight:400;margin:0 0 14px;}
+  .hero p{color:var(--ink-soft);font-size:15px;max-width:42ch;margin:0;}
+  .map-card{background:var(--white);border:1px solid var(--line);border-radius:2px;padding:18px;position:relative;}
+  .map-card svg{width:100%;height:auto;display:block;}
+  .pin{transition:transform .35s ease;}
+  .map-caption{font-size:12px;color:var(--ink-soft);margin-top:8px;display:flex;justify-content:space-between;}
+  .config{padding:20px 0;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:center;flex-wrap:wrap;}
+  .config label{font-size:12px;color:var(--ink-soft);}
+  .config input{font:inherit;font-size:13px;padding:8px 10px;border:1px solid var(--line);border-radius:2px;background:var(--white);min-width:220px;}
+  .tabs{display:flex;gap:0;margin-top:32px;border-bottom:1px solid var(--line);}
+  .tab{font-family:Fraunces,serif;font-size:16px;padding:10px 0;margin-right:32px;background:none;border:none;color:var(--ink-soft);cursor:pointer;border-bottom:2px solid transparent;}
+  .tab.active{color:var(--ink);border-bottom-color:var(--gold);}
+  .panel{display:none;padding-top:28px;}
+  .panel.active{display:block;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 20px;}
+  .field{display:flex;flex-direction:column;gap:5px;}
+  .field label{font-size:12px;color:var(--ink-soft);}
+  .field input{font:inherit;font-size:14px;padding:9px 11px;border:1px solid var(--line);border-radius:2px;background:var(--white);}
+  .field input:focus{outline:2px solid var(--teal);outline-offset:1px;}
+  .actions{margin-top:24px;display:flex;align-items:center;gap:16px;}
+  button.primary{font-family:Inter,sans-serif;font-weight:600;font-size:14px;background:var(--teal);color:var(--white);border:none;padding:12px 22px;border-radius:2px;cursor:pointer;}
+  button.primary:hover{background:#183b36;}
+  button.primary:disabled{opacity:.5;cursor:default;}
+  .status{font-size:13px;color:var(--ink-soft);}
+  .status.error{color:#8a2f2f;}
+  .ledger{margin-top:30px;border:1px solid var(--line);background:var(--white);padding:26px 28px;display:none;}
+  .ledger.show{display:block;}
+  .ledger .price{font-family:Fraunces,serif;font-size:34px;margin:0;}
+  .ledger .range{font-size:13px;color:var(--ink-soft);margin-top:6px;}
+  .upload-box{border:1px dashed var(--line);background:var(--white);padding:28px;text-align:center;}
+  .upload-box input{display:none;}
+  .upload-box label{cursor:pointer;font-size:14px;color:var(--teal);text-decoration:underline;}
+  .filename{font-size:13px;color:var(--ink-soft);margin-top:10px;}
+  .download{display:inline-block;margin-top:18px;font-size:14px;color:var(--teal);}
+  footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);font-size:12px;color:var(--ink-soft);}
+  @media(max-width:720px){.hero{grid-template-columns:1fr;}.grid{grid-template-columns:1fr;}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="brand">Golden <span>Ledger</span></div>
+    <div class="tagline">Automated valuation, California census blocks</div>
+  </header>
+
+  <section class="hero">
+    <div>
+      <h1>What a block of California is worth,<br>estimated from its own numbers.</h1>
+      <p>Enter a block's income, housing stock, and coordinates, and the model returns a valuation the way an appraiser would read a comp sheet — one line, one price, one margin of error.</p>
+    </div>
+    <div class="map-card">
+      <svg viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg">
+        <path d="M60 8 L120 4 L130 40 L150 55 L140 90 L155 120 L135 150 L145 190 L120 230 L90 252 L70 230 L78 190 L60 160 L70 120 L55 90 L62 55 Z"
+          fill="none" stroke="#1f4d47" stroke-width="1.4" opacity="0.55"/>
+        <circle id="pin" class="pin" cx="100" cy="130" r="4.5" fill="#b8862f"/>
+      </svg>
+      <div class="map-caption"><span id="latLabel">Lat 37.0</span><span id="lngLabel">Lng -120.0</span></div>
+    </div>
+  </section>
+
+  <div class="config" style="display:none;">
+  <div>
+    <label for="apiBase">API address</label><br>
+    <input id="apiBase" type="text" value="">
+  </div>
+  <div class="status" id="apiStatus">not checked</div>
+ </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="single">Single estimate</button>
+    <button class="tab" data-tab="bulk">Bulk appraisal</button>
+  </div>
+
+  <div class="panel active" id="panel-single">
+    <form id="singleForm">
+      <div class="grid">
+        <div class="field"><label>Median income (10k USD) — MedInc</label><input type="number" step="0.01" name="MedInc" value="4.5" required></div>
+        <div class="field"><label>Average house age (years)</label><input type="number" step="0.1" name="HouseAge" value="25" required></div>
+        <div class="field"><label>Average rooms per house</label><input type="number" step="0.01" name="Averooms" value="5.5" required></div>
+        <div class="field"><label>Average bedrooms per house</label><input type="number" step="0.01" name="Avebedrooms" value="1.1" required></div>
+        <div class="field"><label>Block population</label><input type="number" step="1" name="Population" value="1200" required></div>
+        <div class="field"><label>Average occupants per house</label><input type="number" step="0.01" name="AveOccupation" value="3.0" required></div>
+        <div class="field"><label>Latitude (32–42)</label><input type="number" step="0.0001" id="lat" name="Latitude" value="37.0" required></div>
+        <div class="field"><label>Longitude (−125 to −114)</label><input type="number" step="0.0001" id="lng" name="Longitude" value="-120.0" required></div>
+      </div>
+      <div class="actions">
+        <button class="primary" type="submit">Get estimate</button>
+        <span class="status" id="singleStatus"></span>
+      </div>
+    </form>
+    <div class="ledger" id="ledger">
+      <p class="price" id="ledgerPrice"></p>
+      <p class="range" id="ledgerRange"></p>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-bulk">
+    <p style="color:var(--ink-soft);font-size:14px;">Upload a CSV with columns: MedInc, HouseAge, AveRooms, AveBedrms, Population, AveOccup, Latitude, Longitude.</p>
+    <div class="upload-box">
+      <input type="file" id="csvInput" accept=".csv">
+      <label for="csvInput">Choose a CSV file</label>
+      <div class="filename" id="fileName">No file chosen</div>
+    </div>
+    <div class="actions">
+      <button class="primary" id="bulkBtn" disabled>Appraise file</button>
+      <span class="status" id="bulkStatus"></span>
+    </div>
+    <div id="downloadWrap"></div>
+  </div>
+
+  <footer>
+    Model: Random Forest Regressor · trained on California census data · average error ≈ $37,778. Not a formal appraisal.
+  </footer>
+</div>
+
+<script>
+const tabs = document.querySelectorAll('.tab');
+tabs.forEach(t => t.addEventListener('click', () => {
+  tabs.forEach(x => x.classList.remove('active'));
+  t.classList.add('active');
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + t.dataset.tab).classList.add('active');
+}));
+
+function apiBase(){ return document.getElementById('apiBase').value.replace(/\/$/, ''); }
+
+function updatePin(){
+  const lat = parseFloat(document.getElementById('lat').value);
+  const lng = parseFloat(document.getElementById('lng').value);
+  document.getElementById('latLabel').textContent = 'Lat ' + (isNaN(lat)?'--':lat.toFixed(2));
+  document.getElementById('lngLabel').textContent = 'Lng ' + (isNaN(lng)?'--':lng.toFixed(2));
+  if(isNaN(lat) || isNaN(lng)) return;
+  const y = 250 - ((Math.min(Math.max(lat,32),42) - 32) / 10) * 230;
+  const x = 60 + ((lng + 125) / 11) * 90;
+  document.getElementById('pin').setAttribute('cx', x.toFixed(1));
+  document.getElementById('pin').setAttribute('cy', y.toFixed(1));
+}
+document.getElementById('lat').addEventListener('input', updatePin);
+document.getElementById('lng').addEventListener('input', updatePin);
+updatePin();
+
+document.getElementById('singleForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const statusEl = document.getElementById('singleStatus');
+  const ledger = document.getElementById('ledger');
+  const fd = new FormData(e.target);
+  const payload = {};
+  fd.forEach((v,k) => payload[k] = parseFloat(v));
+  statusEl.textContent = 'Estimating…';
+  statusEl.classList.remove('error');
+  ledger.classList.remove('show');
+  try{
+    const res = await fetch(apiBase() + '/predict', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.detail || 'Prediction failed');
+    document.getElementById('ledgerPrice').textContent = data['predicted price'];
+    document.getElementById('ledgerRange').textContent = 'Likely range: ' + data['findance range'];
+    ledger.classList.add('show');
+    statusEl.textContent = '';
+  }catch(err){
+    statusEl.textContent = err.message + ' — check the API address and that the server is running with CORS enabled.';
+    statusEl.classList.add('error');
+  }
+});
+
+const csvInput = document.getElementById('csvInput');
+const bulkBtn = document.getElementById('bulkBtn');
+csvInput.addEventListener('change', () => {
+  const f = csvInput.files[0];
+  document.getElementById('fileName').textContent = f ? f.name : 'No file chosen';
+  bulkBtn.disabled = !f;
+  document.getElementById('downloadWrap').innerHTML = '';
+});
+
+bulkBtn.addEventListener('click', async () => {
+  const statusEl = document.getElementById('bulkStatus');
+  const f = csvInput.files[0];
+  if(!f) return;
+  const fd = new FormData();
+  fd.append('file', f);
+  statusEl.textContent = 'Appraising file…';
+  statusEl.classList.remove('error');
+  document.getElementById('downloadWrap').innerHTML = '';
+  try{
+    const res = await fetch(apiBase() + '/predict-file', { method:'POST', body: fd });
+    if(!res.ok){
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.detail || 'Appraisal failed');
+    }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    document.getElementById('downloadWrap').innerHTML =
+      '<a class="download" href="' + url + '" download="prediction.csv">Download prediction.csv</a>';
+    statusEl.textContent = 'Done.';
+  }catch(err){
+    statusEl.textContent = err.message;
+    statusEl.classList.add('error');
+  }
+});
+</script>
+</body>
+</html>
